@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"net/smtp"
-	"os"
 	"reflect"
 	"strconv"
 
@@ -25,6 +24,7 @@ const (
 )
 
 var pageState []byte
+
 
 func PostMessage(s *gocql.Session) func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	return func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -127,13 +127,10 @@ func PostEmail(e *models.Email, session *gocql.Session) {
 
 func SendEmails(e []models.Email) {
 
-	SMTPServer := os.Getenv("SMTP_SERV")
-	from := os.Getenv("FROM")
-	pass := os.Getenv("PASS")
-	smtpPort := os.Getenv("SMTP_PORT")
-	addr := SMTPServer + smtpPort
+	var s models.SmtpConfig
+	addr := s.SmtpAddress + s.SmtpPort
 
-	auth := smtp.PlainAuth(" ", from, pass, SMTPServer)
+	auth := smtp.PlainAuth(" ", s.SmtpEmail, s.SmtpPass, s.SmtpAddress)
 
 	for _, elem := range e {
 
@@ -142,7 +139,7 @@ func SendEmails(e []models.Email) {
 			"\r\n" +
 			elem.Content + "\r\n")
 		to := []string{elem.Email}
-		err := smtp.SendMail(addr, auth, from, to, msg)
+		err := smtp.SendMail(addr, auth, s.SmtpEmail, to, msg)
 		if err != nil {
 			log.Fatal(err)
 		}
