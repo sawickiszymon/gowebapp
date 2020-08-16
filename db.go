@@ -6,11 +6,11 @@ import (
 	"log"
 	"os"
 )
+
 const (
 	CassandraUrl      = "CASSANDRA_URL"
 	CassandraKeyspace = "CASSANDRA_KEYSPACE"
 )
-
 
 func InitCluster() *gocql.Session {
 	cassandra := checkEnvVar(CassandraUrl)
@@ -24,7 +24,7 @@ func InitCluster() *gocql.Session {
 	return session
 }
 
-func checkEnvVar(key string) string{
+func checkEnvVar(key string) string {
 	cassandra, exists := os.LookupEnv(key)
 	if !exists {
 		log.Fatal("Environment variable doesn't exists :" + key)
@@ -39,7 +39,7 @@ func createCluster(host string, keyspace string) *gocql.ClusterConfig {
 	return cluster
 }
 
-func createKeyspace(keyspace string, cluster *gocql.ClusterConfig){
+func createKeyspace(keyspace string, cluster *gocql.ClusterConfig) {
 	session, err := cluster.CreateSession()
 	if err != nil {
 		log.Fatal("Fatal error: ", err)
@@ -55,7 +55,7 @@ func createKeyspace(keyspace string, cluster *gocql.ClusterConfig){
 	log.Println("Keyspace created: ", keyspace)
 }
 
-func createEmailTable(keyspace string, s *gocql.Session){
+func createEmailTable(keyspace string, s *gocql.Session) {
 	tableName := keyspace + ".Email"
 	createTableQuery := "CREATE TABLE IF NOT EXISTS " + tableName + "\n" +
 		"(\n    email        text," +
@@ -63,7 +63,7 @@ func createEmailTable(keyspace string, s *gocql.Session){
 		"\n    content      text," +
 		"\n    magic_number int," +
 		"\n    PRIMARY KEY (email, magic_number, content)\n);"
-	createIndex := "CREATE INDEX  IF NOT EXISTS mNumber_index ON " + tableName +"(magic_number);"
+	createIndex := "CREATE INDEX  IF NOT EXISTS mNumber_index ON " + tableName + "(magic_number);"
 	if err := s.Query(createTableQuery).Exec(); err != nil {
 		log.Println("Table was not created: ", err)
 	}

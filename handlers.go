@@ -17,12 +17,13 @@ import (
 )
 
 const (
-	INSERT         = `INSERT INTO Email (email, title, content, magic_number) VALUES (?, ?, ?, ?) USING TTL 300`
-	SELECT_EMAIL_TO_SEND        = `SELECT email, title, content FROM Email WHERE magic_number = ?`
-	SELECT_EMAIL   = `SELECT email, title, content, magic_number FROM Email WHERE email = ?`
-	SELECT_COUNT   = `SELECT Count(*) FROM Email WHERE email = ?`
-	DELETE_MESSAGE = `DELETE FROM Email WHERE email = ? AND magic_number = ?`
+	INSERT               = `INSERT INTO Email (email, title, content, magic_number) VALUES (?, ?, ?, ?) USING TTL 300`
+	SELECT_EMAIL_TO_SEND = `SELECT email, title, content FROM Email WHERE magic_number = ?`
+	SELECT_EMAIL         = `SELECT email, title, content, magic_number FROM Email WHERE email = ?`
+	SELECT_COUNT         = `SELECT Count(*) FROM Email WHERE email = ?`
+	DELETE_MESSAGE       = `DELETE FROM Email WHERE email = ? AND magic_number = ?`
 )
+
 var pageState []byte
 
 func PostMessage(s *gocql.Session) func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -81,7 +82,7 @@ func ViewMessage(s *gocql.Session) func(writer http.ResponseWriter, request *htt
 		}
 
 		var numberOfEmails = GetEmailCount(ps.ByName("email"), s)
-		var firstRowEmail = (pageNumber*pageLimit)-pageLimit
+		var firstRowEmail = (pageNumber * pageLimit) - pageLimit
 
 		if err := s.Query(SELECT_EMAIL, ps.ByName("email")).PageState(pageState).Scan(&e.Email, &e.Title, &e.Content, &e.MagicNumber); err != nil {
 			log.Println(err)
@@ -89,7 +90,7 @@ func ViewMessage(s *gocql.Session) func(writer http.ResponseWriter, request *htt
 
 		for i := 0; i < pageNumber; i++ {
 
-			if numberOfEmails <=  firstRowEmail{
+			if numberOfEmails <= firstRowEmail {
 				json.NewEncoder(writer).Encode("There is no emails to display")
 				return
 			}
@@ -147,6 +148,7 @@ func SendEmails(e []models.Email) {
 		}
 	}
 }
+
 //
 //func GetReadyToSend (){
 //
@@ -164,15 +166,14 @@ func DecodeRequest(w http.ResponseWriter, r *http.Request) models.Email {
 	return e
 }
 
-func PostRequestValidation(e models.Email) bool{
+func PostRequestValidation(e models.Email) bool {
 	isValid := true
 	v := reflect.ValueOf(e)
-	for i := 0; i <v.NumField(); i++ {
+	for i := 0; i < v.NumField(); i++ {
 		value := v.Field(i)
-		if value.IsZero(){
+		if value.IsZero() {
 			isValid = false
 		}
 	}
 	return isValid
 }
-

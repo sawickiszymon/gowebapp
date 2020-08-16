@@ -8,8 +8,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-
-
 func main() {
 	s := InitCluster()
 
@@ -23,4 +21,3 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", router))
 
 }
-

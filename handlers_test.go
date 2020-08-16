@@ -9,8 +9,6 @@ import (
 	"testing"
 )
 
-
-
 func TestViewMessage(t *testing.T) {
 
 	//cfg := &gocql.ClusterConfig{}
@@ -51,6 +49,6 @@ func TestViewMessage(t *testing.T) {
 	}
 }
 
-func TestMain(m *testing.M){
+func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
