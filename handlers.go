@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"net/smtp"
+	"os"
 	"reflect"
 	"strconv"
 
@@ -125,12 +126,11 @@ func PostEmail(e *models.Email, session *gocql.Session) {
 	}
 }
 
+
 func SendEmails(e []models.Email) {
 
-	s := models.SmtpConfig{}
-	fmt.Println(s.SmtpEmail)
-	var ss models.SmtpConfig
-	fmt.Println(ss)
+	s := NewSmtpConfig()
+
 	addr := s.SmtpAddress + s.SmtpPort
 
 	auth := smtp.PlainAuth(" ", s.SmtpEmail, s.SmtpPass, s.SmtpAddress)
@@ -149,14 +149,6 @@ func SendEmails(e []models.Email) {
 	}
 }
 
-//
-//func GetReadyToSend (){
-//
-//}
-//
-//func prepareSmtp(){
-//
-//}
 func DecodeRequest(w http.ResponseWriter, r *http.Request) models.Email {
 	var e models.Email
 	err := json.NewDecoder(r.Body).Decode(&e)
@@ -176,4 +168,13 @@ func PostRequestValidation(e models.Email) bool {
 		}
 	}
 	return isValid
+}
+
+func NewSmtpConfig() *models.SmtpConfig {
+	return &models.SmtpConfig{
+		SmtpAddress: os.Getenv("SMTP_SERV"),
+		SmtpPort:    os.Getenv("SMTP_PORT"),
+		SmtpEmail:   os.Getenv("FROM"),
+		SmtpPass:    os.Getenv("PASS"),
+	}
 }
