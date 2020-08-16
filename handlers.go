@@ -13,7 +13,7 @@ import (
 	"github.com/badoux/checkmail"
 	"github.com/gocql/gocql"
 	"github.com/julienschmidt/httprouter"
-	"github.com/sawickiszymon/gowebapp/models"
+	models "github.com/sawickiszymon/gowebapp/models"
 )
 
 const (
@@ -23,7 +23,6 @@ const (
 	SELECT_COUNT   = `SELECT Count(*) FROM Email WHERE email = ?`
 	DELETE_MESSAGE = `DELETE FROM Email WHERE email = ? AND magic_number = ?`
 )
-
 var pageState []byte
 
 func PostMessage(s *gocql.Session) func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -127,7 +126,10 @@ func PostEmail(e *models.Email, session *gocql.Session) {
 
 func SendEmails(e []models.Email) {
 
-
+	SMTPServer := os.Getenv("SMTP_SERV")
+	from := os.Getenv("FROM")
+	pass := os.Getenv("PASS")
+	smtpPort := os.Getenv("SMTP_PORT")
 	addr := SMTPServer + smtpPort
 
 	auth := smtp.PlainAuth(" ", from, pass, SMTPServer)
@@ -145,18 +147,14 @@ func SendEmails(e []models.Email) {
 		}
 	}
 }
-
-func GetReadyToSend () []string{
-	SMTPServer := os.Getenv("SMTP_SERV")
-	from := os.Getenv("FROM")
-	pass := os.Getenv("PASS")
-	smtpPort := os.Getenv("SMTP_PORT")
-
-}
-
-func prepareSmtp(){
-
-}
+//
+//func GetReadyToSend (){
+//
+//}
+//
+//func prepareSmtp(){
+//
+//}
 func DecodeRequest(w http.ResponseWriter, r *http.Request) models.Email {
 	var e models.Email
 	err := json.NewDecoder(r.Body).Decode(&e)
