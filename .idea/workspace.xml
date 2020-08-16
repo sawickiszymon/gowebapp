@@ -16,7 +16,7 @@
   </component>
   <component name="GOROOT" path="/usr/local/go" />
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/handlers.go" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/handlers/handlers.go" root0="SKIP_INSPECTION" />
   </component>
   <component name="ProjectId" id="1gB4LLP2om9AS9jH51haOL13Dvy" />
   <component name="ProjectViewState">
@@ -32,6 +32,10 @@
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/driver" />
+      <recent name="$PROJECT_DIR$/handlers" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>

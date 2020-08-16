@@ -3,6 +3,8 @@ package main
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"gowebapp/driver"
+	"gowebapp/handlers"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -13,7 +15,7 @@ func TestViewMessage(t *testing.T) {
 
 	//cfg := &gocql.ClusterConfig{}
 	//handler := &gocql.Session{}
-	handler := InitCluster()
+	handler := driver.InitCluster()
 	defer handler.Close()
 	router := httprouter.New()
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll pass 'nil' as the third parameter.
@@ -23,7 +25,7 @@ func TestViewMessage(t *testing.T) {
 	//body , _ := json.Marshal(postBody)
 	//fmt.Println(body)
 	//request, err := http.NewRequest(http.MethodPost, "/api/message", bytes.NewReader(body))
-	router.GET("/api/message/:email", ViewMessage(handler))
+	router.GET("/api/message/:email", handlers.ViewMessage(handler))
 	//if err != nil {
 	//	t.Fatal(err)
 	//}
