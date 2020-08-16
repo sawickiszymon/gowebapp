@@ -19,5 +19,7 @@ func NewSmtpConfig() *SmtpConfig {
 	}
 }
 
-var config SmtpConfig = *NewSmtpConfig()
+func init(){
+	NewSmtpConfig()
+}
 

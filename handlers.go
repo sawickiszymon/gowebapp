@@ -127,7 +127,10 @@ func PostEmail(e *models.Email, session *gocql.Session) {
 
 func SendEmails(e []models.Email) {
 
-	var s models.SmtpConfig
+	s := models.SmtpConfig{}
+	fmt.Println(s.SmtpEmail)
+	var ss models.SmtpConfig
+	fmt.Println(ss)
 	addr := s.SmtpAddress + s.SmtpPort
 
 	auth := smtp.PlainAuth(" ", s.SmtpEmail, s.SmtpPass, s.SmtpAddress)
