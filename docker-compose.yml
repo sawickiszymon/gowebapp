@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 services:
   cassandra:
     image: library/cassandra:3.11
@@ -22,8 +22,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.test
-    restart: on-failure
-    command: dockerize -wait tcp://cassandra:9042 -timeout 25s /bin/sh -c 'go test -v -tags integration'
+    image: gowebapp
+    command: dockerize -wait tcp://cassandra:9042 -timeout 30s /bin/bash -c 'go test -v -tags integration'
     env_file:
       - appEnv.env
     depends_on:

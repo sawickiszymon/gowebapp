@@ -1,6 +1,6 @@
 # gowebapp
-## Dokumentacja TODO
-
+## Documentation TODO
+Simple REST Api 
 ## Deploy
 ### Docker
 First run Cassandra in Docker Container with detached mode:

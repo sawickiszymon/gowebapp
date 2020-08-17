@@ -21,7 +21,7 @@ func main() {
 	router := httprouter.New()
 	router.POST("/api/message", requestHandlers.PostMessage)
 	router.GET("/api/message/:email", requestHandlers.ViewMessages)
-	router.POST("/api/sendx", requestHandlers.SendMessages)
+	router.POST("/api/send", requestHandlers.SendMessages)
 	log.Fatal(http.ListenAndServe(":8080", router))
 
 }

@@ -44,6 +44,7 @@ func (p *Post) PostMessage(writer http.ResponseWriter, request *http.Request, pa
 		json.NewEncoder(writer).Encode(err)
 		return
 	}
+	json.NewEncoder(writer).Encode("Random Body")
 }
 
 func (p *Post) ViewMessages(writer http.ResponseWriter, request *http.Request, ps httprouter.Params) {
