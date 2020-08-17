@@ -41,7 +41,7 @@ func (s *cassandraPostRepo) Create(e *models.Email) error {
 
 	err := checkmail.ValidateFormat(e.Email)
 	if err != nil {
-		log.Fatal(err)
+		return http.ErrBodyNotAllowed
 	}
 
 	PostEmail(e, s.session)

@@ -64,9 +64,14 @@ func TestViewMessage(t *testing.T) {
 	rr := httptest.NewRecorder()
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	router.ServeHTTP(rr, req)
-	fmt.Println("Response body: ", rr.Body.String())
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("Wrong status")
+	}
+
+	expected := "Email was saved: sz.sawicki1@gmail.com"
+	if rr.Body.String() != expected {
+		t.Errorf("handler returned unexpected body: got %v want %v",
+			rr.Body.String(), expected)
 	}
 }
 
