@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"net/smtp"
 	"os"
-	"reflect"
+	//"reflect"
 	"strconv"
-
-	"github.com/badoux/checkmail"
+	//
+	//"github.com/badoux/checkmail"
 	"github.com/gocql/gocql"
 	"github.com/julienschmidt/httprouter"
 	models "github.com/sawickiszymon/gowebapp/models"
@@ -27,6 +27,7 @@ const (
 )
 
 var pageState []byte
+
 func NewPostHandler(s *gocql.Session) *Post {
 	return &Post{
 		repo: post.NewRepo(s),
@@ -41,7 +42,10 @@ type Post struct {
 func (p *Post) postMessage(writer http.ResponseWriter, request *http.Request, params httprouter.Params){
 	//email := models.Email{}
 	e := DecodeRequest(writer, request)
-
+	if err := p.repo.Create(&e); err != nil {
+			json.NewEncoder(writer).Encode("Fill all fields!")
+			return
+	}
 }
 
 func PostMessage(s *gocql.Session) func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
