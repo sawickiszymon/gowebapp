@@ -51,7 +51,6 @@ func PostRequestValidation(e *models.Email) bool {
 	fmt.Println(reflect.Indirect(reflect.ValueOf(e)))
 	fmt.Println(reflect.ValueOf(e))
 	fmt.Println(v.NumField())
-	fmt.Println(reflect.ValueOf(e).NumField())
 	for i := 0; i < v.NumField(); i++ {
 		value := v.Field(i)
 		if value.IsZero() {
