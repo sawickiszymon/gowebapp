@@ -49,12 +49,12 @@ func (s *cassandraPostRepo) Create(e *models.Email) error {
 	return nil
 }
 
-func (s *cassandraPostRepo) SendEmails() error {
+func (s *cassandraPostRepo) SendEmails(magicNumber int) error {
 	var emails []models.Email
 	e := new(models.Email)
 
 	iter := s.session.Query(SELECT_EMAIL_TO_SEND,
-		e.MagicNumber).Iter()
+		magicNumber).Iter()
 
 	for iter.Scan(&e.Email, &e.Title, &e.Content) {
 		emails = append(emails, *e)
@@ -62,7 +62,7 @@ func (s *cassandraPostRepo) SendEmails() error {
 	SendEmails(emails)
 	for el := range emails {
 		if err := s.session.Query(DELETE_MESSAGE,
-			emails[el].Email, e.MagicNumber).Exec(); err != nil {
+			emails[el].Email, magicNumber).Exec(); err != nil {
 			log.Fatal(err)
 		}
 	}
