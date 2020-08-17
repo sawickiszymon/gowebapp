@@ -99,7 +99,7 @@ func (p *Post) ViewMessages(writer http.ResponseWriter, request *http.Request, p
 		pageNumber, _ = strconv.Atoi(key)
 	}
 
-	emailToDisplay, err := p.repo.View(pageNumber, ps.ByName("email"))
+	emailToDisplay, err := p.repo.ViewMessages(pageNumber, ps.ByName("email"))
 	if err != nil {
 		json.NewEncoder(writer).Encode(err)
 	}
