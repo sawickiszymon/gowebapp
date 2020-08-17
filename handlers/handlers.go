@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/smtp"
@@ -34,17 +33,16 @@ func NewPostHandler(s *gocql.Session) *Post {
 	}
 }
 
-
 type Post struct {
 	repo repository.PostRepo
 }
 
-func (p *Post) PostMessage(writer http.ResponseWriter, request *http.Request, params httprouter.Params){
+func (p *Post) PostMessage(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 
 	e := DecodeRequest(writer, request)
 	if err := p.repo.Create(&e); err != nil {
-			json.NewEncoder(writer).Encode(err)
-			return
+		json.NewEncoder(writer).Encode(err)
+		return
 	}
 }
 
@@ -90,9 +88,8 @@ func SendMessages(s *gocql.Session) func(writer http.ResponseWriter, request *ht
 }
 
 func (p *Post) Test(writer http.ResponseWriter, request *http.Request, ps httprouter.Params) {
-	var e *models.Email
+
 	var pageNumber int
-	fmt.Println(e, "xxx")
 	pages, _ := request.URL.Query()["page"]
 	//If page not specified return first page else return specified page
 	if len(pages) < 1 {
@@ -101,14 +98,13 @@ func (p *Post) Test(writer http.ResponseWriter, request *http.Request, ps httpro
 		key := pages[0]
 		pageNumber, _ = strconv.Atoi(key)
 	}
-	fmt.Println(ps.ByName("email"))
+
 	emailToDisplay, err := p.repo.View(pageNumber, ps.ByName("email"))
 	if err != nil {
 		json.NewEncoder(writer).Encode(err)
 	}
 	json.NewEncoder(writer).Encode(&emailToDisplay)
 	emailToDisplay = nil
-
 }
 
 func ViewMessage(s *gocql.Session) func(writer http.ResponseWriter, request *http.Request, ps httprouter.Params) {
@@ -129,7 +125,7 @@ func ViewMessage(s *gocql.Session) func(writer http.ResponseWriter, request *htt
 		var numberOfEmails = GetEmailCount(ps.ByName("email"), s)
 		var firstRowEmail = (pageNumber * pageLimit) - pageLimit
 
-		if err := s.Query(SELECT_EMAIL, ps.ByName( "email")).PageState(pageState).Scan(&e.Email, &e.Title, &e.Content, &e.MagicNumber); err != nil {
+		if err := s.Query(SELECT_EMAIL, ps.ByName("email")).PageState(pageState).Scan(&e.Email, &e.Title, &e.Content, &e.MagicNumber); err != nil {
 			log.Println(err)
 		}
 
@@ -169,7 +165,6 @@ func GetEmailCount(email string, s *gocql.Session) int {
 //		log.Println(err)
 //	}
 //}
-
 
 func SendEmails(e []models.Email) {
 

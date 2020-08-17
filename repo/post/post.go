@@ -49,29 +49,23 @@ func (s *cassandraPostRepo) Create(e *models.Email) error {
 
 func (s *cassandraPostRepo) View(pageNumber int, email string) ([]models.Email, error) {
 
-
 	var emailToDisplay []models.Email
 	pageLimit := 4
-	fmt.Println(email)
-
 	e := new(models.Email)
 
-
 	var numberOfEmails = GetEmailCount(email, s.session)
-	fmt.Println(numberOfEmails)
 	var firstRowEmail = (pageNumber * pageLimit) - pageLimit
-	fmt.Println(pageState)
+
+	fmt.Println(firstRowEmail)
 
 	if err := s.session.Query(SELECT_EMAIL, email).PageState(pageState).Scan(&e.Email, &e.Title, &e.Content, &e.MagicNumber); err != nil {
-		fmt.Println(e.Email)
-		fmt.Println(pageState)
-		log.Fatal(err)
+		return nil, err
 	}
 
 	for i := 0; i < pageNumber; i++ {
 
 		if numberOfEmails <= firstRowEmail {
-			return nil, http.ErrContentLength
+			return nil, http.ErrBodyNotAllowed
 		}
 
 		iter := s.session.Query(SELECT_EMAIL, e.Email).PageState(pageState).PageSize(pageLimit).Iter()
