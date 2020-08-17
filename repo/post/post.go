@@ -17,7 +17,6 @@ const (
 	SELECT_COUNT         = `SELECT Count(*) FROM Email WHERE email = ?`
 	DELETE_MESSAGE       = `DELETE FROM Email WHERE email = ? AND magic_number = ?`
 )
-
 func NewRepo(s *gocql.Session) repo.PostRepo {
 	return &cassandraPostRepo{
 		session: s,

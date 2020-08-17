@@ -42,7 +42,7 @@ type Post struct {
 func (p *Post) postMessage(writer http.ResponseWriter, request *http.Request, params httprouter.Params){
 	//email := models.Email{}
 	e := DecodeRequest(writer, request)
-	if err := p.repo.Create(&e); err != nil {
+	if err := p.repo.Create(*e); err != nil {
 			json.NewEncoder(writer).Encode("Fill all fields!")
 			return
 	}
