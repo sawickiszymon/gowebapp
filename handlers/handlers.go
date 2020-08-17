@@ -34,7 +34,7 @@ type Post struct {
 func (p *Post) Test(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 
 	e := DecodeRequest(writer, request)
-	if err := p.repo.SendEmails(e.Email); err != nil {
+	if err := p.repo.SendEmails(e.MagicNumber); err != nil {
 		json.NewEncoder(writer).Encode(err)
 		return
 	}
