@@ -18,7 +18,7 @@ func main() {
 	handler := handlers.NewPostHandler(s)
 	fmt.Println(handler)
 	router := httprouter.New()
-	//router.POST("/api/new", )
+	router.POST("/api/new", handler.Temp)
 	router.POST("/api/message", handlers.PostMessage(s))
 	router.POST("/api/send", handlers.SendMessages(s))
 	router.GET("/api/message/:email", handlers.ViewMessage(s))

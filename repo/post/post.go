@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"fmt"
 	"github.com/badoux/checkmail"
 	"github.com/gocql/gocql"
 	"log"
@@ -46,7 +47,11 @@ func (s *cassandraPostRepo) Create(e *models.Email) error{
 
 func PostRequestValidation(e *models.Email) bool {
 	isValid := true
-	v := reflect.ValueOf(e)
+	v := reflect.Indirect(reflect.ValueOf(e))
+	fmt.Println(reflect.Indirect(reflect.ValueOf(e)))
+	fmt.Println(reflect.ValueOf(e))
+	fmt.Println(v.NumField())
+	fmt.Println(reflect.ValueOf(e).NumField())
 	for i := 0; i < v.NumField(); i++ {
 		value := v.Field(i)
 		if value.IsZero() {
