@@ -13,6 +13,7 @@ import (
 	"github.com/gocql/gocql"
 	"github.com/julienschmidt/httprouter"
 	models "github.com/sawickiszymon/gowebapp/models"
+	repo "github.com/sawickiszymon/gowebapp/repo"
 )
 
 const (
@@ -30,7 +31,7 @@ func PostMessage(s *gocql.Session) func(writer http.ResponseWriter, request *htt
 	return func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 		e := DecodeRequest(writer, request)
 
-		if isValid := PostRequestValidation(e); !isValid {
+		if isValid := repo.PostRequestValidation(e); !isValid {
 			json.NewEncoder(writer).Encode("Fill all fields!")
 			return
 		}

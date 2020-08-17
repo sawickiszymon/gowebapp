@@ -7,7 +7,8 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/sawickiszymon/gowebapp/models"
+	models "github.com/sawickiszymon/gowebapp/models"
+	repo "github.com/sawickiszymon/gowebapp/repo"
 )
 const (
 	INSERT               = `INSERT INTO Email (email, title, content, magic_number) VALUES (?, ?, ?, ?) USING TTL 300`
@@ -57,6 +58,15 @@ const (
 //	return count
 //}
 
+func NewRepo(s *gocql.Session) repo.PostRepo {
+	return &cassandraPostRepo{
+		session: s,
+	}
+}
+
+type cassandraPostRepo struct {
+	session *gocql.Session
+}
 
 func PostRequestValidation(e models.Email) bool {
 	isValid := true
