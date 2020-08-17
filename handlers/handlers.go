@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/smtp"
@@ -14,8 +13,8 @@ import (
 	"github.com/gocql/gocql"
 	"github.com/julienschmidt/httprouter"
 	models "github.com/sawickiszymon/gowebapp/models"
-	post "github.com/sawickiszymon/gowebapp/repo/post"
 	repository "github.com/sawickiszymon/gowebapp/repo"
+	post "github.com/sawickiszymon/gowebapp/repo/post"
 )
 
 const (
@@ -39,7 +38,7 @@ type Post struct {
 	repo repository.PostRepo
 }
 
-func (p *Post) Temp(writer http.ResponseWriter, request *http.Request, params httprouter.Params){
+func (p *Post) PostMessage(writer http.ResponseWriter, request *http.Request, params httprouter.Params){
 	//email := models.Email{}
 	e := DecodeRequest(writer, request)
 	if err := p.repo.Create(&e); err != nil {
@@ -48,24 +47,24 @@ func (p *Post) Temp(writer http.ResponseWriter, request *http.Request, params ht
 	}
 }
 
-func PostMessage(s *gocql.Session) func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	return func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-		e := DecodeRequest(writer, request)
-		fmt.Println(e)
-
-
-		//if isValid := repo.PostRequestValidation(e); !isValid {
-		//	json.NewEncoder(writer).Encode("Fill all fields!")
-		//	return
-		//}
-
-		//err := checkmail.ValidateFormat(e.Email)
-		//if err != nil {
-		//	log.Fatal(err)
-		//}
-		//PostEmail(&e, s)
-	}
-}
+//func PostMessage(s *gocql.Session) func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+//	return func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+//		e := DecodeRequest(writer, request)
+//		fmt.Println(e)
+//
+//
+//		//if isValid := repo.PostRequestValidation(e); !isValid {
+//		//	json.NewEncoder(writer).Encode("Fill all fields!")
+//		//	return
+//		//}
+//
+//		//err := checkmail.ValidateFormat(e.Email)
+//		//if err != nil {
+//		//	log.Fatal(err)
+//		//}
+//		//PostEmail(&e, s)
+//	}
+//}
 
 func SendMessages(s *gocql.Session) func(writer http.ResponseWriter, request *http.Request, _ httprouter.Params) {
 
