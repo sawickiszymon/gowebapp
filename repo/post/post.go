@@ -56,8 +56,6 @@ func (s *cassandraPostRepo) View(pageNumber int, email string) ([]models.Email, 
 	var numberOfEmails = GetEmailCount(email, s.session)
 	var firstRowEmail = (pageNumber * pageLimit) - pageLimit
 
-	fmt.Println(firstRowEmail)
-	fmt.Println(numberOfEmails)
 
 	if err := s.session.Query(SELECT_EMAIL, email).PageState(pageState).Scan(&e.Email, &e.Title, &e.Content, &e.MagicNumber); err != nil {
 		return nil, err
@@ -66,6 +64,7 @@ func (s *cassandraPostRepo) View(pageNumber int, email string) ([]models.Email, 
 	for i := 0; i < pageNumber; i++ {
 
 		if numberOfEmails <= firstRowEmail {
+			fmt.Println(http.ErrBodyNotAllowed)
 			return nil, http.ErrBodyNotAllowed
 		}
 

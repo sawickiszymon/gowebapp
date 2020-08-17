@@ -87,7 +87,7 @@ func SendMessages(s *gocql.Session) func(writer http.ResponseWriter, request *ht
 	}
 }
 
-func (p *Post) Test(writer http.ResponseWriter, request *http.Request, ps httprouter.Params) {
+func (p *Post) ViewMessages(writer http.ResponseWriter, request *http.Request, ps httprouter.Params) {
 
 	var pageNumber int
 	pages, _ := request.URL.Query()["page"]
