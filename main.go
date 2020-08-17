@@ -16,12 +16,12 @@ func main() {
 	fmt.Println("Cassandra init done")
 	fmt.Println("RestAPI server")
 
-	handler := handlers.NewPostHandler(s)
+	requestHandlers := handlers.NewPostHandler(s)
 
 	router := httprouter.New()
-	router.POST("/api/message", handler.PostMessage)
-	router.GET("/api/message/:email", handler.ViewMessages)
-	router.POST("/api/sendx", handler.SendMessages)
+	router.POST("/api/message", requestHandlers.PostMessage)
+	router.GET("/api/message/:email", requestHandlers.ViewMessages)
+	router.POST("/api/sendx", requestHandlers.SendMessages)
 	log.Fatal(http.ListenAndServe(":8080", router))
 
 }
