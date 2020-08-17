@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"github.com/badoux/checkmail"
 	"github.com/gocql/gocql"
-	models "github.com/sawickiszymon/gowebapp/models"
-	repo "github.com/sawickiszymon/gowebapp/repo"
+	"github.com/sawickiszymon/gowebapp/models"
+	"github.com/sawickiszymon/gowebapp/repo"
 	"log"
 	"net/http"
+	"net/smtp"
+	"os"
 	"reflect"
 )
 
@@ -46,6 +48,28 @@ func (s *cassandraPostRepo) Create(e *models.Email) error {
 
 	return nil
 }
+
+func (s *cassandraPostRepo) SendEmails() error {
+	var emails []models.Email
+	e := new(models.Email)
+
+	iter := s.session.Query(SELECT_EMAIL_TO_SEND,
+		e.MagicNumber).Iter()
+
+	for iter.Scan(&e.Email, &e.Title, &e.Content) {
+		emails = append(emails, *e)
+	}
+	SendEmails(emails)
+	for el := range emails {
+		if err := s.session.Query(DELETE_MESSAGE,
+			emails[el].Email, e.MagicNumber).Exec(); err != nil {
+			log.Fatal(err)
+		}
+	}
+	emails = nil
+	return nil
+}
+
 
 func (s *cassandraPostRepo) ViewMessages(pageNumber int, email string) ([]models.Email, error) {
 
@@ -110,8 +134,32 @@ func PostEmail(e *models.Email, session *gocql.Session) {
 		log.Println(err)
 	}
 }
-//func SelectEmails(e *models.Email, session *gocql.Session) {
-//	if err := session.Query(SELECT_EMAIL, e.Email).PageState(pageState).Scan(&e.Email, &e.Title, &e.Content, &e.MagicNumber); err != nil {
-//		return err
-//	}
-//}
+
+func SendEmails(e []models.Email) {
+
+	s := NewSmtpConfig()
+	addr := s.SmtpAddress + s.SmtpPort
+	auth := smtp.PlainAuth(" ", s.SmtpEmail, s.SmtpPass, s.SmtpAddress)
+
+	for _, elem := range e {
+
+		msg := []byte("To:" + elem.Email + "\r\n" +
+			"Subject:" + elem.Title + "\r\n" +
+			"\r\n" +
+			elem.Content + "\r\n")
+		to := []string{elem.Email}
+		err := smtp.SendMail(addr, auth, s.SmtpEmail, to, msg)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
+func NewSmtpConfig() *models.SmtpConfig {
+	return &models.SmtpConfig{
+		SmtpAddress: os.Getenv("SMTP_SERV"),
+		SmtpPort:    os.Getenv("SMTP_PORT"),
+		SmtpEmail:   os.Getenv("FROM"),
+		SmtpPass:    os.Getenv("PASS"),
+	}
+}
