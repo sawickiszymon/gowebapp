@@ -21,7 +21,7 @@ func TestViewMessage(t *testing.T) {
 	//handler := &gocql.Session{}
 	s := driver.InitCluster()
 	handler := handlers.NewPostHandler(s)
-	defer s.Close()
+	//defer s.Close()
 	router := httprouter.New()
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll pass 'nil' as the third parameter.
 	//postBody := map[string]interface{}{
@@ -55,8 +55,5 @@ func TestViewMessage(t *testing.T) {
 	if status := response.Code; status != http.StatusOK {
 		t.Errorf("wrong status code: got %v want %v", status, http.StatusOK)
 	}
-}
-
-func TestMain(m *testing.M) {
-	os.Exit(m.Run())
+	t.Fail()
 }
