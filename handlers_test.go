@@ -4,8 +4,8 @@ package main
 import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
-	"gowebapp/driver"
-	"gowebapp/handlers"
+	"github.com/sawickiszymon/gowebapp/driver"
+	"github.com/sawickiszymon/gowebapp/handlers"
 	"net/http"
 	"net/http/httptest"
 	"os"

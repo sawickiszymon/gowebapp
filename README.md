@@ -19,5 +19,5 @@ docker run --env-file=appEnv.env -p 8080:8080 --link cassandra gowebapp
 ### Docker-compose
 Another way to deploy whole project is to use docker-compose:
 ```
-docker-compose up
+docker-compose up --build
 ```

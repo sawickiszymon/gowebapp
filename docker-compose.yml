@@ -21,12 +21,10 @@ services:
   myapp-test:
     image: gowebapp
 #    command: bash -c 'while !</dev/tcp/cassandra/9042; do sleep 5; done; cqlsh cassandra -f initdb.sql;'
-    command: dockerize
-      -wait tcp://cassandra:9042 -wait tcp://app:8080 -timeout 10s
-      bash -c "go run handlers_test.go"
+    command: bash -c 'go test handlers_test.go'
     restart: always
     env_file:
       - appEnv.env
-    depends_on:
-      - app
-      - cassandra
+#    depends_on:
+#      - app
+#      - cassandra
