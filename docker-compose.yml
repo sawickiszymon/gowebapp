@@ -19,16 +19,11 @@ services:
     env_file:
       - appEnv.env
   myapp-test:
-    image: gowebapp
-
-    command: dockerize
-      -wait tcp://db:5432 -wait tcp://myapp:8000 -timeout 10s
-      bash -c "node db/init.js && yarn test"
-#    command: bash -c 'while !</dev/tcp/cassandra/9042; do sleep 5; done; go test -run handlers_test.go'
-##    command: dockerize
-##      -wait tcp://cassandra:9042 -timeout 100s
-##      bash -c 'go test handlers_test.go;'
-    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    restart: on-failure
+    command: dockerize -wait tcp://cassandra:9042 -timeout 25s /bin/sh -c 'go test -v -tags integration'
     env_file:
       - appEnv.env
     depends_on:

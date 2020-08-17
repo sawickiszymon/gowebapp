@@ -14,6 +14,7 @@ import (
 
 func TestViewMessage(t *testing.T) {
 
+	fmt.Println("yes")
 	os.Setenv("CASSANDRA_URL", "cassandra")
 	os.Setenv("CASSANDRA_KEYSPACE", "cass")
 	//cfg := &gocql.ClusterConfig{}
@@ -33,7 +34,7 @@ func TestViewMessage(t *testing.T) {
 	router.GET("/api/message/:email", handler.ViewMessages)
 	//if err != nil {
 	//	t.Fatal(err)
-	//}
+	//}"github.com/jwilder/dockerize"
 	//router.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	request, _ := http.NewRequest("GET", "/api/message/sz.sawicki1@gmail.com", nil)
@@ -43,17 +44,11 @@ func TestViewMessage(t *testing.T) {
 	querry.Add("page", "1")
 	request.URL.RawQuery = querry.Encode()
 	//request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	// returned := ViewMessage()
-	//handlerTemp = ViewMessage()
-	//httprouter.
-	//handlery := http.HandlerFunc(httprouter.Handle(ViewMessage(handler))
-	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
-	// directly and pass in our Request and ResponseRecorder.
 	router.ServeHTTP(response, request)
+	fmt.Println(response.Body)
 
 	// Check the status code is what we expect.
 	if status := response.Code; status != http.StatusOK {
 		t.Errorf("wrong status code: got %v want %v", status, http.StatusOK)
 	}
-	t.Fail()
 }
