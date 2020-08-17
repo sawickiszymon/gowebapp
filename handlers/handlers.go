@@ -39,10 +39,10 @@ type Post struct {
 }
 
 func (p *Post) PostMessage(writer http.ResponseWriter, request *http.Request, params httprouter.Params){
-	//email := models.Email{}
+
 	e := DecodeRequest(writer, request)
 	if err := p.repo.Create(&e); err != nil {
-			json.NewEncoder(writer).Encode("Fill all fields!")
+			json.NewEncoder(writer).Encode(err)
 			return
 	}
 }
@@ -86,6 +86,23 @@ func SendMessages(s *gocql.Session) func(writer http.ResponseWriter, request *ht
 		}
 		emails = nil
 	}
+}
+
+func (p *Post) test(writer http.ResponseWriter, request *http.Request, ps httprouter.Params) {
+	var e models.Email
+	var emailToDisplay []models.Email
+	var pageNumber int
+	pages, _ := request.URL.Query()["page"]
+	//If page not specified return first page else return specified page
+	if len(pages) < 1 {
+		pageNumber = 1
+	} else {
+		key := pages[0]
+		pageNumber, _ = strconv.Atoi(key)
+	}
+
+
+
 }
 
 func ViewMessage(s *gocql.Session) func(writer http.ResponseWriter, request *http.Request, ps httprouter.Params) {
