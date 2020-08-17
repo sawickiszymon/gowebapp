@@ -47,12 +47,14 @@ func (s *cassandraPostRepo) Create(e *models.Email) error {
 	return nil
 }
 
-func (s *cassandraPostRepo) View(e *models.Email, pageNumber int, email string) ([]models.Email, error) {
+func (s *cassandraPostRepo) View(pageNumber int, email string) ([]models.Email, error) {
 
 
 	var emailToDisplay []models.Email
 	pageLimit := 4
 	fmt.Println(email)
+
+	e := new(models.Email)
 
 
 	var numberOfEmails = GetEmailCount(email, s.session)
@@ -61,6 +63,8 @@ func (s *cassandraPostRepo) View(e *models.Email, pageNumber int, email string) 
 	fmt.Println(pageState)
 
 	if err := s.session.Query(SELECT_EMAIL, email).PageState(pageState).Scan(&e.Email, &e.Title, &e.Content, &e.MagicNumber); err != nil {
+		fmt.Println(e.Email)
+		fmt.Println(pageState)
 		log.Fatal(err)
 	}
 
@@ -108,6 +112,11 @@ func PostRequestValidation(e *models.Email) bool {
 }
 
 func PostEmail(e *models.Email, session *gocql.Session) {
+	if err := session.Query(INSERT, e.Email, e.Title, e.Content, e.MagicNumber).Exec(); err != nil {
+		log.Println(err)
+	}
+}
+func SelectEmails(e *models.Email, session *gocql.Session) {
 	if err := session.Query(INSERT, e.Email, e.Title, e.Content, e.MagicNumber).Exec(); err != nil {
 		log.Println(err)
 	}
