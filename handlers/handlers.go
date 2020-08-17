@@ -88,9 +88,8 @@ func SendMessages(s *gocql.Session) func(writer http.ResponseWriter, request *ht
 	}
 }
 
-func (p *Post) test(writer http.ResponseWriter, request *http.Request, ps httprouter.Params) {
-	var e models.Email
-	var emailToDisplay []models.Email
+func (p *Post) Test(writer http.ResponseWriter, request *http.Request, ps httprouter.Params) {
+	var e *models.Email
 	var pageNumber int
 	pages, _ := request.URL.Query()["page"]
 	//If page not specified return first page else return specified page
@@ -100,8 +99,12 @@ func (p *Post) test(writer http.ResponseWriter, request *http.Request, ps httpro
 		key := pages[0]
 		pageNumber, _ = strconv.Atoi(key)
 	}
-
-
+	emailToDisplay, err := p.repo.View(e, pageNumber, ps.ByName("email"))
+	if err != nil {
+		json.NewEncoder(writer).Encode(err)
+	}
+	json.NewEncoder(writer).Encode(&emailToDisplay)
+	emailToDisplay = nil
 
 }
 
