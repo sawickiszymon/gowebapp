@@ -1,6 +1,6 @@
 package repo
 
-import "gowebapp/models"
+import "github.com/sawickiszymon/gowebapp/models"
 
 type PostRepo interface {
 	Create(e *models.Email) error
