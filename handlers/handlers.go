@@ -85,7 +85,7 @@ func ViewMessage(s *gocql.Session) func(writer http.ResponseWriter, request *htt
 		var numberOfEmails = GetEmailCount(ps.ByName("email"), s)
 		var firstRowEmail = (pageNumber * pageLimit) - pageLimit
 
-		if err := s.Query(SELECT_EMAIL, ps.ByName("email")).PageState(pageState).Scan(&e.Email, &e.Title, &e.Content, &e.MagicNumber); err != nil {
+		if err := s.Query(SELECT_EMAIL, ps.ByName( "email")).PageState(pageState).Scan(&e.Email, &e.Title, &e.Content, &e.MagicNumber); err != nil {
 			log.Println(err)
 		}
 
