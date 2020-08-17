@@ -47,7 +47,7 @@ func (s *cassandraPostRepo) Create(e *models.Email) error {
 	return nil
 }
 
-func (s *cassandraPostRepo) View(pageNumber int, email string) ([]models.Email, error) {
+func (s *cassandraPostRepo) ViewMessages(pageNumber int, email string) ([]models.Email, error) {
 
 	var emailToDisplay []models.Email
 	pageLimit := 4
