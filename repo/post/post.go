@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"fmt"
 	"github.com/badoux/checkmail"
 	"github.com/gocql/gocql"
 	models "github.com/sawickiszymon/gowebapp/models"
@@ -51,10 +52,13 @@ func (s *cassandraPostRepo) View(e *models.Email, pageNumber int, email string) 
 
 	var emailToDisplay []models.Email
 	pageLimit := 4
+	fmt.Println(email)
 
 
 	var numberOfEmails = GetEmailCount(email, s.session)
+	fmt.Println(numberOfEmails)
 	var firstRowEmail = (pageNumber * pageLimit) - pageLimit
+	fmt.Println(pageState)
 
 	if err := s.session.Query(SELECT_EMAIL, email).PageState(pageState).Scan(&e.Email, &e.Title, &e.Content, &e.MagicNumber); err != nil {
 		log.Fatal(err)

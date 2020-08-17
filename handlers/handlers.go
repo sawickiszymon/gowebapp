@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/smtp"
@@ -99,6 +100,7 @@ func (p *Post) Test(writer http.ResponseWriter, request *http.Request, ps httpro
 		key := pages[0]
 		pageNumber, _ = strconv.Atoi(key)
 	}
+	fmt.Println(ps.ByName("email"))
 	emailToDisplay, err := p.repo.View(e, pageNumber, ps.ByName("email"))
 	if err != nil {
 		json.NewEncoder(writer).Encode(err)
