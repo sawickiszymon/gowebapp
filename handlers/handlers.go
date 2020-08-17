@@ -51,7 +51,12 @@ func SendMessages(s *gocql.Session) func(writer http.ResponseWriter, request *ht
 		e := DecodeRequest(writer, request)
 		iter := s.Query(SELECT_EMAIL_TO_SEND,
 			e.MagicNumber).Iter()
-		fmt.Println(iter.NumRows())
+
+		fmt.Println(emails)
+		//if iter.NumRows() == 0 {
+		//	fmt.Println("No emails to send")
+		//	return
+		//}
 
 		for iter.Scan(&e.Email, &e.Title, &e.Content) {
 			emails = append(emails, e)
@@ -63,7 +68,7 @@ func SendMessages(s *gocql.Session) func(writer http.ResponseWriter, request *ht
 				log.Fatal(err)
 			}
 		}
-
+		emails = nil
 	}
 }
 
@@ -132,6 +137,7 @@ func SendEmails(e []models.Email) {
 	s := NewSmtpConfig()
 
 	addr := s.SmtpAddress + s.SmtpPort
+	fmt.Println( s.SmtpEmail, s.SmtpPort,addr, s.SmtpPass)
 
 	auth := smtp.PlainAuth(" ", s.SmtpEmail, s.SmtpPass, s.SmtpAddress)
 

@@ -8,17 +8,19 @@ services:
     restart: always
     volumes:
     - ./cassandra:/var/lib/cassandra
-    links:
-      - cassandra-load-keyspace
-  cassandra-load-keyspace:
-    container_name: cassandra-load-keyspace
-    image: library/cassandra:3.11
-    volumes:
-      - ./initdb.sql:/initdb.sql
-    command: bash -c 'while !</dev/tcp/cassandra/9042; do sleep 3; done; cqlsh cassandra -f initdb.sql;'
+#    links:
+#      - cassandra-load-keyspace
+#  cassandra-load-keyspace:
+#    container_name: cassandra-load-keyspace
+#    image: library/cassandra:3.11
+#    volumes:
+#      - ./initdb.sql:/initdb.sql
+#    command: bash -c 'while !</dev/tcp/cassandra/9042; do sleep 3; done; cqlsh cassandra -f initdb.sql;'
   app:
     build: .
     image: gowebapp
+    depends_on:
+      - cassandra
     ports:
       - 8080:8080
     restart: always

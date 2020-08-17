@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"gowebapp/driver"
-	"gowebapp/handlers"
 	"log"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/sawickiszymon/gowebapp/driver"
+	"github.com/sawickiszymon/gowebapp/handlers"
 )
 
 func main() {
