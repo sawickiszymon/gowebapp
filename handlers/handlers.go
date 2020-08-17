@@ -14,8 +14,8 @@ import (
 	"github.com/gocql/gocql"
 	"github.com/julienschmidt/httprouter"
 	models "github.com/sawickiszymon/gowebapp/models"
-	repository "github.com/sawickiszymon/gowebapp/repo"
 	post "github.com/sawickiszymon/gowebapp/repo/post"
+	repository "github.com/sawickiszymon/gowebapp/repo"
 )
 
 const (
@@ -41,7 +41,6 @@ type Post struct {
 func (p *Post) postMessage(writer http.ResponseWriter, request *http.Request, params httprouter.Params){
 	//email := models.Email{}
 	e := DecodeRequest(writer, request)
-
 
 }
 
