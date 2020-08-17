@@ -118,11 +118,11 @@ func GetEmailCount(email string, s *gocql.Session) int {
 	return count
 }
 
-func PostEmail(e *models.Email, session *gocql.Session) {
-	if err := session.Query(INSERT, e.Email, e.Title, e.Content, e.MagicNumber).Exec(); err != nil {
-		log.Println(err)
-	}
-}
+//func PostEmail(e *models.Email, session *gocql.Session) {
+//	if err := session.Query(INSERT, e.Email, e.Title, e.Content, e.MagicNumber).Exec(); err != nil {
+//		log.Println(err)
+//	}
+//}
 
 
 func SendEmails(e []models.Email) {
@@ -154,17 +154,17 @@ func DecodeRequest(w http.ResponseWriter, r *http.Request) models.Email {
 	return e
 }
 
-func PostRequestValidation(e models.Email) bool {
-	isValid := true
-	v := reflect.ValueOf(e)
-	for i := 0; i < v.NumField(); i++ {
-		value := v.Field(i)
-		if value.IsZero() {
-			isValid = false
-		}
-	}
-	return isValid
-}
+//func PostRequestValidation(e models.Email) bool {
+//	isValid := true
+//	v := reflect.ValueOf(e)
+//	for i := 0; i < v.NumField(); i++ {
+//		value := v.Field(i)
+//		if value.IsZero() {
+//			isValid = false
+//		}
+//	}
+//	return isValid
+//}
 
 func NewSmtpConfig() *models.SmtpConfig {
 	return &models.SmtpConfig{

@@ -1,20 +1,22 @@
 package repo
-//
-//import (
-//	"encoding/json"
-//	"github.com/gocql/gocql"
-//	"github.com/sawickiszymon/gowebapp/models"
-//	"log"
-//)
-//
-//const (
-//	INSERT               = `INSERT INTO Email (email, title, content, magic_number) VALUES (?, ?, ?, ?) USING TTL 300`
-//	SELECT_EMAIL_TO_SEND = `SELECT email, title, content FROM Email WHERE magic_number = ?`
-//	SELECT_EMAIL         = `SELECT email, title, content, magic_number FROM Email WHERE email = ?`
-//	SELECT_COUNT         = `SELECT Count(*) FROM Email WHERE email = ?`
-//	DELETE_MESSAGE       = `DELETE FROM Email WHERE email = ? AND magic_number = ?`
-//)
-//
+
+import (
+	"encoding/json"
+	"github.com/gocql/gocql"
+	"log"
+	"net/http"
+	"reflect"
+
+	"github.com/sawickiszymon/gowebapp/models"
+)
+const (
+	INSERT               = `INSERT INTO Email (email, title, content, magic_number) VALUES (?, ?, ?, ?) USING TTL 300`
+	SELECT_EMAIL_TO_SEND = `SELECT email, title, content FROM Email WHERE magic_number = ?`
+	SELECT_EMAIL         = `SELECT email, title, content, magic_number FROM Email WHERE email = ?`
+	SELECT_COUNT         = `SELECT Count(*) FROM Email WHERE email = ?`
+	DELETE_MESSAGE       = `DELETE FROM Email WHERE email = ? AND magic_number = ?`
+)
+
 //func tsett(pageNumber int, email string) []models.Email {
 //	var pageLimit = 4
 //	var s gocql.Session
@@ -54,3 +56,32 @@ package repo
 //	}
 //	return count
 //}
+
+
+func PostRequestValidation(e models.Email) bool {
+	isValid := true
+	v := reflect.ValueOf(e)
+	for i := 0; i < v.NumField(); i++ {
+		value := v.Field(i)
+		if value.IsZero() {
+			isValid = false
+		}
+	}
+	return isValid
+}
+
+func PostEmail(e *models.Email, session *gocql.Session) {
+	if err := session.Query(INSERT, e.Email, e.Title, e.Content, e.MagicNumber).Exec(); err != nil {
+		log.Println(err)
+	}
+}
+
+func DecodeRequest(w http.ResponseWriter, r *http.Request) models.Email {
+	var e models.Email
+	err := json.NewDecoder(r.Body).Decode(&e)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+	return e
+}
+
