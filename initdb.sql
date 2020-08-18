@@ -1,5 +1,6 @@
 CREATE KEYSPACE IF NOT EXISTS cass WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 1};
 USE cass;
+
 -- THIS KEYSPACE SHOULD MATCH cassandraEnv file keyspace for it to use the same table as gocql
 CREATE TABLE IF NOT EXISTS Email
 (

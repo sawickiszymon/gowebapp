@@ -71,3 +71,12 @@ func createEmailTable(keyspace string, s *gocql.Session) {
 
 	log.Println(fmt.Sprintf("Table %s was created", tableName))
 }
+
+func deleteEmailTable(keyspace string, s *gocql.Session) {
+	tableName := keyspace + ".Email"
+	deleteTableQuery := "DROP TABLE IF EXISTS " + keyspace + ".Email;"
+
+	s.Query(deleteTableQuery).Exec()
+
+	log.Println(fmt.Sprintf("Table %s was droped\n", tableName))
+}
