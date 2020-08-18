@@ -34,6 +34,8 @@ func (p *Post) SendMessages(writer http.ResponseWriter, request *http.Request, p
 		json.NewEncoder(writer).Encode(err)
 		return
 	}
+
+	json.NewEncoder(writer).Encode("Emails were sent: " + e.Email)
 }
 
 

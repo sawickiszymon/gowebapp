@@ -16,12 +16,12 @@ services:
     ports:
       - 8080:8080
     restart: always
-    command: /bin/app
+    command: /bin/dockerize -wait tcp://cassandra:9042 -timeout 20s /bin/app
     env_file:
       - appEnv.env
   myapp-test:
     image: gowebapp
-    command: /bin/dockerize -wait tcp://cassandra:9042 -timeout 30s /bin/handlers_test
+    command: /bin/dockerize -wait http://app:8080/api/message/sz.sawicki1@gmail.com -timeout 40s /bin/handlers_test
     env_file:
       - appEnv.env
     depends_on:
