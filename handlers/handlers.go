@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gocql/gocql"
 	"github.com/julienschmidt/httprouter"
@@ -31,14 +31,13 @@ type Post struct {
 func (p *Post) SendMessages(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 
 	e := DecodeRequest(writer, request)
-	err, emails:= p.repo.SendEmails(e.MagicNumber)
+	err, emails := p.repo.SendEmails(e.MagicNumber)
 	if err != nil  {
 		json.NewEncoder(writer).Encode(err)
 		return
 	}
-	fmt.Println(e.Email)
 
-	json.NewEncoder(writer).Encode("Emails were sent: " + e.Email)
+	json.NewEncoder(writer).Encode("Emails were sent: " + strings.Join(emails, ","))
 }
 
 
