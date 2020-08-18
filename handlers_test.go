@@ -240,11 +240,12 @@ func TestSendMessage(t *testing.T) {
 	if status := response.Code; status != http.StatusOK {
 		t.Errorf("Wrong status")
 	}
+	fmt.Println(response.Body.String())
 
 	readLine := response.Body.String()[:len(response.Body.String())-1]
 	readLine = strings.TrimSuffix(readLine, "\n")
 
-	expected := "\"" + "Email was sent: " + "sz.sawicki1@gmail.com" + "\""
+	expected := "\"" + "Email was sent: " + postBody.Email + "\""
 	fmt.Println(readLine)
 	if !cmp.Equal(readLine, expected) {
 		t.Errorf("handler returned unexpected body: got %v want %v",

@@ -2,3 +2,4 @@
 *.db
 /cassandra/
 *.log
+*.sql

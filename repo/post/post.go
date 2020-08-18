@@ -48,25 +48,27 @@ func (s *cassandraPostRepo) Create(e *models.Email) error {
 	return nil
 }
 
-func (s *cassandraPostRepo) SendEmails(magicNumber int) error {
-	var emails []models.Email
+func (s *cassandraPostRepo) SendEmails(magicNumber int) (error, []string){
+	var emailsToSend []models.Email
 	e := new(models.Email)
+	var emails []string
 
 	iter := s.session.Query(SELECT_EMAIL_TO_SEND,
 		magicNumber).Iter()
 
 	for iter.Scan(&e.Email, &e.Title, &e.Content) {
-		emails = append(emails, *e)
+		emailsToSend = append(emailsToSend, *e)
 	}
-	SendEmails(emails)
-	for el := range emails {
+	SendEmail(emailsToSend)
+	for el := range emailsToSend {
+		emails = append(emails, emailsToSend[el].Email)
 		if err := s.session.Query(DELETE_MESSAGE,
-			emails[el].Email, magicNumber).Exec(); err != nil {
+			emailsToSend[el].Email, magicNumber).Exec(); err != nil {
 			log.Fatal(err)
 		}
 	}
-	emails = nil
-	return nil
+	emailsToSend = nil
+	return nil, emails
 }
 
 
@@ -133,8 +135,9 @@ func PostEmail(e *models.Email, session *gocql.Session) {
 	}
 }
 
-func SendEmails(e []models.Email) {
+func SendEmail(e []models.Email) []string{
 
+	var emails []string
 	s := NewSmtpConfig()
 	addr := s.SmtpAddress + s.SmtpPort
 	auth := smtp.PlainAuth(" ", s.SmtpEmail, s.SmtpPass, s.SmtpAddress)
@@ -145,12 +148,14 @@ func SendEmails(e []models.Email) {
 			"Subject:" + elem.Title + "\r\n" +
 			"\r\n" +
 			elem.Content + "\r\n")
+		emails = append(emails, elem.Email)
 		to := []string{elem.Email}
 		err := smtp.SendMail(addr, auth, s.SmtpEmail, to, msg)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
+	return emails
 }
 
 func NewSmtpConfig() *models.SmtpConfig {

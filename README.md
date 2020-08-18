@@ -13,9 +13,12 @@ docker build -t gowebapp .
 ```
 After building the application run the application with:
 ```
-docker run --env-file=appEnv.env -p 8080:8080 --link cassandra gowebapp
+docker run --env-file=appEnv.env -p 8080:8080 --link cassandra gowebapp /bin/app
 ```
-
+Then after application starts run tests with:
+```
+docker run --link=cassandra gowebapp /bin/handlers_test
+```
 ### Docker-compose
 Another way to deploy whole project is to use docker-compose:
 ```
