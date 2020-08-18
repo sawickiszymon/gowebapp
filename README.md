@@ -1,6 +1,6 @@
 # gowebapp
 ## Documentation TODO
-Simple REST Api 
+Simple Golang REST Api using CQL
 ## Deploy
 ### Docker
 First run Cassandra in Docker Container with detached mode:

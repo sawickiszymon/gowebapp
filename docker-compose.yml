@@ -9,7 +9,7 @@ services:
     volumes:
     - ./cassandra:/var/lib/cassandra
   app:
-    build: .
+#    build: .
     image: gowebapp
     depends_on:
       - cassandra
