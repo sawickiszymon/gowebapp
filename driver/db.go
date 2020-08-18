@@ -6,25 +6,28 @@ import (
 	"log"
 	"os"
 )
-
+// Read only environments variable
 const (
 	CassandraUrl      = "CASSANDRA_URL"
 	CassandraKeyspace = "CASSANDRA_KEYSPACE"
 )
 
+// InitCluster initializes cluster specified in appEnv.env file
+// Creates Email table and returns cassandra session
 func InitCluster() *gocql.Session {
-	cassandra := checkEnvVar(CassandraUrl)
-	keyspace := checkEnvVar(CassandraKeyspace)
-	cluster := createCluster(cassandra, keyspace)
+	cassandra := CheckEnvVar(CassandraUrl)
+	keyspace := CheckEnvVar(CassandraKeyspace)
+	cluster := CreateCluster(cassandra, keyspace)
 	session, err := cluster.CreateSession()
 	if err != nil {
 		log.Fatal("Fatal error: ", err)
 	}
-	createEmailTable(keyspace, session)
+	CreateEmailTable(keyspace, session)
 	return session
 }
 
-func checkEnvVar(key string) string {
+// CheckEnvVar checks whether environment variable key exists
+func CheckEnvVar(key string) string {
 	cassandra, exists := os.LookupEnv(key)
 	if !exists {
 		log.Fatal("Environment variable doesn't exists :" + key)
@@ -32,14 +35,17 @@ func checkEnvVar(key string) string {
 	return cassandra
 }
 
-func createCluster(host string, keyspace string) *gocql.ClusterConfig {
+// CreateCluster creates cluster with provided host and keyspace
+// Returns cluster config
+func CreateCluster(host string, keyspace string) *gocql.ClusterConfig {
 	cluster := gocql.NewCluster(host)
-	createKeyspace(keyspace, cluster)
+	CreateKeyspace(keyspace, cluster)
 	cluster.Keyspace = keyspace
 	return cluster
 }
 
-func createKeyspace(keyspace string, cluster *gocql.ClusterConfig) {
+// CreateKeyspace creates keyspace if it doesnt exists in specified cluster
+func CreateKeyspace(keyspace string, cluster *gocql.ClusterConfig) {
 	session, err := cluster.CreateSession()
 	if err != nil {
 		log.Fatal("Fatal error: ", err)
@@ -55,7 +61,8 @@ func createKeyspace(keyspace string, cluster *gocql.ClusterConfig) {
 	log.Println("Keyspace created: ", keyspace)
 }
 
-func createEmailTable(keyspace string, s *gocql.Session) {
+// CreateEmailTable creates table and index on email address if does not exist in specified keyspace
+func CreateEmailTable(keyspace string, s *gocql.Session) {
 	tableName := keyspace + ".Email"
 	createTableQuery := "CREATE TABLE IF NOT EXISTS " + tableName + "\n" +
 		"(\n    email        text," +

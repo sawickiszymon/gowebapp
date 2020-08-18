@@ -12,6 +12,7 @@ import (
 	"reflect"
 )
 
+// Read only queries
 const (
 	INSERT               = `INSERT INTO Email (email, title, content, magic_number) VALUES (?, ?, ?, ?) USING TTL 300`
 	SELECT_EMAIL_TO_SEND = `SELECT email, title, content FROM Email WHERE magic_number = ?`
@@ -22,16 +23,21 @@ const (
 
 var pageState []byte
 
+// Constructor of PostRepo initializing Cassandra instance
 func NewRepo(s *gocql.Session) repo.PostRepo {
 	return &cassandraPostRepo{
 		session: s,
 	}
 }
 
+// Struct of cassandra session
 type cassandraPostRepo struct {
 	session *gocql.Session
 }
 
+// Create saves message with valid request body to database
+// Takes pointer to the email struct as argument
+// If fails returns ErrBodyNotAllowed
 func (s *cassandraPostRepo) Create(e *models.Email) error {
 
 	if isValid := PostRequestValidation(e); !isValid {
@@ -48,6 +54,8 @@ func (s *cassandraPostRepo) Create(e *models.Email) error {
 	return nil
 }
 
+// SendEmails sends emails with provided magicNumber and then deletes them from database
+// Returns array containing all sent emails and any error encountered.
 func (s *cassandraPostRepo) SendEmails(magicNumber int) (error, []string){
 	var emailsToSend []models.Email
 	e := new(models.Email)
@@ -71,7 +79,8 @@ func (s *cassandraPostRepo) SendEmails(magicNumber int) (error, []string){
 	return nil, emails
 }
 
-
+// ViewMessages displays pageNumber of email string saved in database in batches of pageLimit=4
+// Returns array of email struct and any error it encounters
 func (s *cassandraPostRepo) ViewMessages(pageNumber int, email string) ([]models.Email, error) {
 
 	var emailToDisplay []models.Email
@@ -108,6 +117,8 @@ func (s *cassandraPostRepo) ViewMessages(pageNumber int, email string) ([]models
 	return emailToDisplay, nil
 }
 
+
+// GetEmailCount returns count of rows with specified email in the database
 func GetEmailCount(email string, s *gocql.Session) int {
 	var count int
 	iter := s.Query(SELECT_COUNT, email).Iter()
@@ -116,10 +127,11 @@ func GetEmailCount(email string, s *gocql.Session) int {
 	return count
 }
 
+// PostRequestValidation returns false if any value of Email struct is missing or if email address is invalid
+// Else returns true
 func PostRequestValidation(e *models.Email) bool {
 	isValid := true
 	v := reflect.Indirect(reflect.ValueOf(e))
-
 	for i := 0; i < v.NumField(); i++ {
 		value := v.Field(i)
 		if value.IsZero() {
@@ -129,12 +141,15 @@ func PostRequestValidation(e *models.Email) bool {
 	return isValid
 }
 
+// PostEmail injects specified message into database
 func PostEmail(e *models.Email, session *gocql.Session) {
 	if err := session.Query(INSERT, e.Email, e.Title, e.Content, e.MagicNumber).Exec(); err != nil {
 		log.Println(err)
 	}
 }
 
+// SendEmail takes array of Email structs and sends them through SMTP
+// Returns array of email addresses
 func SendEmail(e []models.Email) []string{
 
 	var emails []string
@@ -158,6 +173,7 @@ func SendEmail(e []models.Email) []string{
 	return emails
 }
 
+// NewSmtpConfig initializes SMTP config with environment variables provided in appEnv.env file
 func NewSmtpConfig() *models.SmtpConfig {
 	return &models.SmtpConfig{
 		SmtpAddress: os.Getenv("SMTP_SERV"),

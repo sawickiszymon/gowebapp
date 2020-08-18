@@ -16,7 +16,7 @@ services:
     ports:
       - 8080:8080
     restart: always
-    command: /bin/dockerize -wait tcp://cassandra:9042 -timeout 20s /bin/app
+    command: /bin/dockerize -wait tcp://cassandra:9042 -timeout 30s /bin/app
     env_file:
       - appEnv.env
   myapp-test:

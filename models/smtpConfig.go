@@ -1,5 +1,6 @@
 package models
 
+// SmtpConfig struct
 type SmtpConfig struct {
 
 	SmtpAddress		string

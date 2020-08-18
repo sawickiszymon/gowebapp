@@ -1,5 +1,6 @@
 package models
 
+// Email struct - models database table
 type Email struct {
 	Email       string `json:"email"`
 	Title       string `json:"title"`

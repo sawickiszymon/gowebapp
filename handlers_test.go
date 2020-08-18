@@ -245,7 +245,7 @@ func TestSendMessage(t *testing.T) {
 	readLine := response.Body.String()[:len(response.Body.String())-1]
 	readLine = strings.TrimSuffix(readLine, "\n")
 
-	expected := "\"" + "Email was sent: " + postBody.Email + "\""
+	expected := "\"" + "Emails were sent: " + postBody.Email + "\""
 	fmt.Println(readLine)
 	if !cmp.Equal(readLine, expected) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
@@ -272,6 +272,6 @@ func ExecutePostRequest(postBody models.Email) *httptest.ResponseRecorder {
 }
 
 func prepareEnvVar() {
-	os.Setenv("CASSANDRA_URL", "cassandra")
-	os.Setenv("CASSANDRA_KEYSPACE", "cass")
+	//os.Setenv("CASSANDRA_URL", "cassandra")
+	//os.Setenv("CASSANDRA_KEYSPACE", "cass")
 }

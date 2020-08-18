@@ -13,21 +13,20 @@ import (
 	post "github.com/sawickiszymon/gowebapp/repo/post"
 )
 
-const (
-	SELECT_EMAIL_TO_SEND = `SELECT email, title, content FROM Email WHERE magic_number = ?`
-	DELETE_MESSAGE       = `DELETE FROM Email WHERE email = ? AND magic_number = ?`
-)
-
+// Constructor initializing Cassandra instance
 func NewPostHandler(s *gocql.Session) *Post {
 	return &Post{
 		repo: post.NewRepo(s),
 	}
 }
 
+// Repository struct
 type Post struct {
 	repo repository.PostRepo
 }
 
+// SendMessages handles POST /api/send endpoint
+// Sends messages with provided Email.magic_number value from request body and then deletes them from database
 func (p *Post) SendMessages(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 
 	e := DecodeRequest(writer, request)
@@ -40,7 +39,9 @@ func (p *Post) SendMessages(writer http.ResponseWriter, request *http.Request, p
 	json.NewEncoder(writer).Encode("Emails were sent: " + strings.Join(emails, ","))
 }
 
-
+// PostMessage handles POST /api/message endpoint
+// Saves messages specified in request body to database
+// Database records lifes period is 5 minutes
 func (p *Post) PostMessage(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 
 	e := DecodeRequest(writer, request)
@@ -51,11 +52,14 @@ func (p *Post) PostMessage(writer http.ResponseWriter, request *http.Request, pa
 	json.NewEncoder(writer).Encode("Email was saved: " + e.Email)
 }
 
+// ViewMessages handles GET /api/message/{emailValue} endpoint
+// Returns emails with given email value in batches of 4
+// If page parameter not specified return first page, else return provided page
 func (p *Post) ViewMessages(writer http.ResponseWriter, request *http.Request, ps httprouter.Params) {
 
 	var pageNumber int
 	pages, _ := request.URL.Query()["page"]
-	//If page not specified return first page, else return specified page
+
 	if len(pages) < 1 {
 		pageNumber = 1
 	} else {
@@ -72,6 +76,7 @@ func (p *Post) ViewMessages(writer http.ResponseWriter, request *http.Request, p
 	emailToDisplay = nil
 }
 
+// DecodeRequest decodes request body, and returns it in form of Email struct
 func DecodeRequest(w http.ResponseWriter, r *http.Request) models.Email {
 	var e models.Email
 	err := json.NewDecoder(r.Body).Decode(&e)
