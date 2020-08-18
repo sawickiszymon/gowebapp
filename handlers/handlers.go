@@ -41,7 +41,7 @@ func (p *Post) PostMessage(writer http.ResponseWriter, request *http.Request, pa
 
 	e := DecodeRequest(writer, request)
 	if err := p.repo.Create(&e); err != nil {
-		json.NewEncoder(writer).Encode(err)
+		json.NewEncoder(writer).Encode(err.Error())
 		return
 	}
 	json.NewEncoder(writer).Encode("Email was saved: " + e.Email)

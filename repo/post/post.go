@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"fmt"
 	"github.com/badoux/checkmail"
 	"github.com/gocql/gocql"
 	"github.com/sawickiszymon/gowebapp/models"
@@ -88,7 +87,6 @@ func (s *cassandraPostRepo) ViewMessages(pageNumber int, email string) ([]models
 	for i := 0; i < pageNumber; i++ {
 
 		if numberOfEmails <= firstRowEmail {
-			fmt.Println(http.ErrBodyNotAllowed)
 			return nil, http.ErrBodyNotAllowed
 		}
 
